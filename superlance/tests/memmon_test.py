@@ -37,6 +37,21 @@ class MemmonTests(unittest.TestCase):
         memmon.runforever(test=True)
         self.assertEqual(memmon.stderr.getvalue(), '')
 
+    def test_runforever_tick_program_with_group(self):
+        programs = {'foo:foo': 0 }
+        groups = {}
+        _any = None
+        memmon = self._makeOnePopulated(programs, groups, _any)
+        memmon.stdin.write('eventname:TICK len:0\n')
+        memmon.stdin.seek(0)
+        memmon.runforever(test=True)
+        lines = memmon.stderr.getvalue().split('\n')
+        self.assertEqual(len(lines), 4)
+        self.assertEqual(lines[0], 'Checking programs foo:foo=0')
+        self.assertEqual(lines[1], 'RSS of foo:foo is 2264064')
+        self.assertEqual(lines[2], 'Restarting foo:foo')
+        self.assertEqual(lines[3], '')
+
     def test_runforever_tick_programs(self):
         programs = {'foo':0, 'bar':0, 'baz_01':0 }
         groups = {}

@@ -170,7 +170,7 @@ class Memmon:
                 for n in name, pname:
                     if n in self.programs:
                         self.stderr.write('RSS of %s is %s\n' % (pname, rss))
-                        if  rss > self.programs[name]:
+                        if (n == name and rss > self.programs[name]) or (n == pname and rss > self.programs[pname]):
                             self.restart(pname, rss)
                             continue
 
